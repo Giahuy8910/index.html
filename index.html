@@ -2,49 +2,81 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Cây Thông Noel</title>
+    <title>3D Sparkling Christmas Tree</title>
     <style>
-        body { background: #020d18; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        .tree { color: #2d5a27; font-size: 30px; font-family: monospace; white-space: pre; text-shadow: 0 0 10px #0f0; line-height: 1.1; }
-        .star { color: gold; font-size: 50px; animation: blink 1s infinite; margin-bottom: -10px; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .snow { position: absolute; top: -10px; color: white; animation: fall linear infinite; pointer-events: none; }
-        @keyframes fall { to { transform: translateY(110vh); } }
-        .trunk { color: #4b2d0b; font-family: monospace; font-size: 30px; }
+        body { margin: 0; background: #000; overflow: hidden; }
+        canvas { display: block; }
+        #title {
+            position: absolute; top: 20px; width: 100%;
+            text-align: center; color: gold; font-family: 'serif';
+            font-size: 24px; letter-spacing: 5px; text-shadow: 0 0 10px gold;
+        }
     </style>
 </head>
 <body>
-    <div id="snow-container"></div>
-    <div class="star">★</div>
-    <div class="tree">
-         *
-        / \
-       / o \
-      / o o \
-     /_______\
-      /     \
-     / o   o \
-    /_________\
-     /       \
-    / o   o   \
-   /___________\
-    </div>
-    <div class="trunk">|___|</div>
-
+    <div id="title">MERRY CHRISTMAS 2025</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        function createSnow() {
-            const container = document.getElementById('snow-container');
-            const flake = document.createElement('div');
-            flake.className = 'snow';
-            flake.innerHTML = '❄';
-            flake.style.left = Math.random() * 100 + 'vw';
-            flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            flake.style.opacity = Math.random();
-            flake.style.fontSize = (Math.random() * 10 + 10) + 'px';
-            container.appendChild(flake);
-            setTimeout(() => flake.remove(), 5000);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Tạo các điểm sáng (Particles)
+        const particlesCount = 3500;
+        const positions = new Float32Array(particlesCount * 3);
+        const colors = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount; i++) {
+            // Công thức tạo hình nón cho cây thông
+            const ratio = i / particlesCount;
+            const angle = ratio * 100;
+            const radius = (1 - ratio) * 5;
+            
+            const x = Math.cos(angle) * radius;
+            const y = ratio * 12 - 6;
+            const z = Math.sin(angle) * radius;
+
+            positions[i * 3] = x + (Math.random() - 0.5) * 0.5;
+            positions[i * 3 + 1] = y;
+            positions[i * 3 + 2] = z + (Math.random() - 0.5) * 0.5;
+
+            // Màu vàng, đỏ, xanh lấp lánh
+            colors[i * 3] = 1; 
+            colors[i * 3 + 1] = Math.random() > 0.5 ? 0.8 : 0.2; 
+            colors[i * 3 + 2] = 0;
         }
-        setInterval(createSnow, 100);
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({ size: 0.1, vertexColors: true, transparent: true, opacity: 0.8 });
+        const tree = new THREE.Points(geometry, material);
+        scene.add(tree);
+
+        // Thêm ngôi sao trên đỉnh
+        const starGeo = new THREE.SphereGeometry(0.3, 24, 24);
+        const starMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const star = new THREE.Mesh(starGeo, starMat);
+        star.position.y = 6.2;
+        scene.add(star);
+
+        camera.position.z = 15;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            tree.rotation.y += 0.01; // Xoay cây thông
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
