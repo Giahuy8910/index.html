@@ -1,19 +1,50 @@
-flake.style.animation = `fall ${Math.random() * 3 + 2}s linear infinite`;
-                flake.style.opacity = Math.random();
-                snowContainer.appendChild(flake);
-            }
-        }
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Cây Thông Noel</title>
+    <style>
+        body { background: #020d18; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .tree { color: #2d5a27; font-size: 30px; font-family: monospace; white-space: pre; text-shadow: 0 0 10px #0f0; line-height: 1.1; }
+        .star { color: gold; font-size: 50px; animation: blink 1s infinite; margin-bottom: -10px; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .snow { position: absolute; top: -10px; color: white; animation: fall linear infinite; pointer-events: none; }
+        @keyframes fall { to { transform: translateY(110vh); } }
+        .trunk { color: #4b2d0b; font-family: monospace; font-size: 30px; }
+    </style>
+</head>
+<body>
+    <div id="snow-container"></div>
+    <div class="star">★</div>
+    <div class="tree">
+         *
+        / \
+       / o \
+      / o o \
+     /_______\
+      /     \
+     / o   o \
+    /_________\
+     /       \
+    / o   o   \
+   /___________\
+    </div>
+    <div class="trunk">|___|</div>
 
-        // Tạo hiệu ứng rơi cho tuyết
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes fall {
-                0% { transform: translateY(-10vh); }
-                100% { transform: translateY(110vh); }
-            }
-        `;
-        document.head.appendChild(style);
-        createSnow();
+    <script>
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            const flake = document.createElement('div');
+            flake.className = 'snow';
+            flake.innerHTML = '❄';
+            flake.style.left = Math.random() * 100 + 'vw';
+            flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            flake.style.opacity = Math.random();
+            flake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            container.appendChild(flake);
+            setTimeout(() => flake.remove(), 5000);
+        }
+        setInterval(createSnow, 100);
     </script>
 </body>
 </html>
