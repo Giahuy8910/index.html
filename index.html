@@ -1,0 +1,19 @@
+flake.style.animation = `fall ${Math.random() * 3 + 2}s linear infinite`;
+                flake.style.opacity = Math.random();
+                snowContainer.appendChild(flake);
+            }
+        }
+
+        // Tạo hiệu ứng rơi cho tuyết
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fall {
+                0% { transform: translateY(-10vh); }
+                100% { transform: translateY(110vh); }
+            }
+        `;
+        document.head.appendChild(style);
+        createSnow();
+    </script>
+</body>
+</html>
